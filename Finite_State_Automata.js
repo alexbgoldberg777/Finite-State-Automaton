@@ -168,4 +168,3 @@ class FSA {
   } //End of FSA constructor.
 } //End of FSA class.
 
-export {FSA}; //Exports the FSA class to be imported into the included test file.
