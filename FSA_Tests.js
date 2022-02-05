@@ -1,5 +1,3 @@
-import {FSA} from './
-
 function assert(bool){
     if (bool){
         console.log("passed");
