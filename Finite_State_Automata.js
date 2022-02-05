@@ -168,3 +168,85 @@ class FSA {
   } //End of FSA constructor.
 } //End of FSA class.
 
+
+/*
+* Following are unit tests for the FSA class.
+*/
+
+function assert(condition) { //Standard assert method to throw exceptions if an answer is incorrect.
+    if (!condition) {
+        throw "Assertion failed";
+    }
+}
+
+function test_createState_and_nextState(){ //Tests general creating states and moving between them.
+  let fsa = new FSA();
+  fsa.createState("s1", [{e2: "s2"}, {e3: "s3"}]).createState("s2", [{e1: "s1"}, {e3: "s3"}]);
+  assert(fsa.showState() === "s1");
+  fsa.nextState("e2");
+  assert(fsa.showState() === "s2");
+  fsa.nextState("e3");
+  assert(fsa.showState() === "s3");
+  assert(fsa.curState.transitions.length === 0);
+}
+
+/*
+* Tests that states with multiple transitions on the same event will randomly
+* choose one state to move to (call multiple times to see results).
+*/
+function test_nextState_and_nextStates_with_repeated_events(){
+  let fsa = new FSA();
+  fsa.createState("s1", [{e2: "s2"}, {e2: "s3"}]).createState("s2", [{e1: "s1"}, {e3: "s3"}]).createState("s3", [{e1: "s1"}, {e2: "s2"}]);
+  assert(fsa.curState.nextStates("e2").length === 2);
+  assert(fsa.curState.nextStates("e2")[0].getName() === "s2");
+  assert(fsa.curState.nextStates("e2")[1].getName() === "s3");
+  let next = fsa.curState.nextState("e2").getName();
+  assert(next === "s2" || next === "s3");
+}
+
+function test_chaining_nextState(){ //Tests that fluid chaining works and results in the correct state being made current.
+  let fsa = new FSA();
+  fsa.createState("s1", [{e2: "s2"}, {e3: "s3"}]).createState("s2", [{e1: "s1"}, {e3: "s3"}]).createState("s3", [{e1: "s1"}, {e2: "s2"}])
+    .nextState("e2").nextState("e3").nextState("e1");
+  assert(fsa.showState() === "s1");
+}
+
+function test_createState_replacing(){ //Tests that making a new state with the same name as one that exists replaces it.
+  let fsa = new FSA();
+  fsa.createState("s1", [{e2: "s2"}, {e3: "s3"}]);
+  fsa.createState("s2", [{e1: "s1"}, {e3: "s3"}]);
+  fsa.createState("s3", [{e1: "s1"}, {e2: "s2"}]);
+  fsa.createState("s1", [{e2: "s3"}]);
+  assert(fsa.curState.transitions.length === 1);
+  fsa.nextState("e2");
+  assert(fsa.showState() === "s3");
+  fsa.createState("s3", [{e1: "s2"}]);
+  fsa.nextState("e1");
+  assert(fsa.showState() === "s2");
+}
+
+function test_fsa_addTransition(){ //Tests general addTransition method.
+  let fsa = new FSA();
+  fsa.createState("s1", [])
+    .addTransition("s1", {e2: "s2"});
+  assert(fsa.curState.transitions.length === 1);
+  fsa.nextState("e2");
+  assert(fsa.showState() === "s2");
+  assert(fsa.curState.transitions.length === 0);
+}
+
+/*
+* Tests that adding a transition that does not already exist when creating a new state
+* correctly creates a new one.
+*/
+function test_creating_new_transitions_in_createState(){
+  let fsa = new FSA();
+  fsa.createState("s1", [{e2: "s2"}]);
+  fsa.nextState("e2");
+  assert(fsa.showState() === "s2");
+  assert(fsa.curState.transitions.length === 0);
+  fsa.addTransition("s2", {e3: "s3"});
+  fsa.nextState("e3");
+  assert(fsa.showState() === "s3");
+  assert(fsa.curState.transitions.length === 0);
+}
