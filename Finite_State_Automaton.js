@@ -1,5 +1,5 @@
 /*
-* This FSA class stands for finite state automata, a fluid design version of the state
+* This Finite_state_automaton class stands for finite state automata, a fluid design version of the state
 * design pattern. It allows for multiple states of some process to be created along with
 * transitions to other states. Each state has transitions that allow the machine to be able
 * to move to other states on specific events. The fluid design part allows for multiple 
@@ -11,13 +11,13 @@
 * what state is moved to on this event.
 */
 
-class FSA {
+class Finite_state_automaton {
   constructor(){
-    this.curState = undefined; //Denotes the state which the FSA is currently pointing to.
+    this.curState = undefined; //Denotes the state which the automaton is currently pointing to.
     let states = []; //Denotes a list of all current states in the automaton.
 
     /* This State class is used to create the individual states within the automaton.
-    * It is declared within the FSA constructor for the sake of information hiding; states
+    * It is declared within the Finite_state_automaton constructor for the sake of information hiding; states
     * can only be declared within the automata, and since the list of states is not a class
     * member, the State class is also within the construtor so it can access all states without
     * the states being accessible outside of the automaton. States are represented by an object
@@ -74,8 +74,8 @@ class FSA {
     
     
     /*
-    * Following are the methods of the FSA class itself, used to add and traverse states
-    * into the machine. Each is represented as a class member, still within the FSA constructor
+    * Following are the methods of the Finite_state_automaton class itself, used to add and traverse states
+    * into the machine. Each is represented as a class member, still within the Finite_state_automaton constructor
     * to access the states array without allowing the states to be accessible outside
     * of the automaton.
     */
@@ -165,12 +165,12 @@ class FSA {
       return this.curState.getName();
     }
 
-  } //End of FSA constructor.
-} //End of FSA class.
+  } //End of Finite_state_automaton constructor.
+} //End of Finite_state_automaton class.
 
 
 /*
-* Following are unit tests for the FSA class.
+* Following are unit tests for the Finite_state_automaton class.
 */
 
 function assert(condition) { //Standard assert method to throw exceptions if an answer is incorrect.
@@ -180,7 +180,7 @@ function assert(condition) { //Standard assert method to throw exceptions if an 
 }
 
 function test_createState_and_nextState(){ //Tests general creating states and moving between them.
-  let fsa = new FSA();
+  let fsa = new Finite_state_automaton();
   fsa.createState("s1", [{e2: "s2"}, {e3: "s3"}]).createState("s2", [{e1: "s1"}, {e3: "s3"}]);
   assert(fsa.showState() === "s1");
   fsa.nextState("e2");
@@ -195,7 +195,7 @@ function test_createState_and_nextState(){ //Tests general creating states and m
 * choose one state to move to (call multiple times to see results).
 */
 function test_nextState_and_nextStates_with_repeated_events(){
-  let fsa = new FSA();
+  let fsa = new Finite_state_automaton();
   fsa.createState("s1", [{e2: "s2"}, {e2: "s3"}]).createState("s2", [{e1: "s1"}, {e3: "s3"}]).createState("s3", [{e1: "s1"}, {e2: "s2"}]);
   assert(fsa.curState.nextStates("e2").length === 2);
   assert(fsa.curState.nextStates("e2")[0].getName() === "s2");
@@ -205,14 +205,14 @@ function test_nextState_and_nextStates_with_repeated_events(){
 }
 
 function test_chaining_nextState(){ //Tests that fluid chaining works and results in the correct state being made current.
-  let fsa = new FSA();
+  let fsa = new Finite_state_automaton();
   fsa.createState("s1", [{e2: "s2"}, {e3: "s3"}]).createState("s2", [{e1: "s1"}, {e3: "s3"}]).createState("s3", [{e1: "s1"}, {e2: "s2"}])
     .nextState("e2").nextState("e3").nextState("e1");
   assert(fsa.showState() === "s1");
 }
 
 function test_createState_replacing(){ //Tests that making a new state with the same name as one that exists replaces it.
-  let fsa = new FSA();
+  let fsa = new Finite_state_automaton();
   fsa.createState("s1", [{e2: "s2"}, {e3: "s3"}]);
   fsa.createState("s2", [{e1: "s1"}, {e3: "s3"}]);
   fsa.createState("s3", [{e1: "s1"}, {e2: "s2"}]);
@@ -226,7 +226,7 @@ function test_createState_replacing(){ //Tests that making a new state with the 
 }
 
 function test_fsa_addTransition(){ //Tests general addTransition method.
-  let fsa = new FSA();
+  let fsa = new Finite_state_automaton();
   fsa.createState("s1", [])
     .addTransition("s1", {e2: "s2"});
   assert(fsa.curState.transitions.length === 1);
@@ -240,7 +240,7 @@ function test_fsa_addTransition(){ //Tests general addTransition method.
 * correctly creates a new one.
 */
 function test_creating_new_transitions_in_createState(){
-  let fsa = new FSA();
+  let fsa = new Finite_state_automaton();
   fsa.createState("s1", [{e2: "s2"}]);
   fsa.nextState("e2");
   assert(fsa.showState() === "s2");
