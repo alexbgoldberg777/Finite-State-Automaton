@@ -36,7 +36,7 @@ class Finite_state_automaton {
         this.transitions = [];
       }
       
-      addTransition(event, state){ //Adds a single transition to state s on event e to this state.
+      addTransition(e, s){ //Adds a single transition to state s on event e to this state.
         let obj = {};
         this.transitions.push(obj);
         obj[e] = s;
