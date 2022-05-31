@@ -136,7 +136,7 @@ class Finite_state_automaton {
         stateNames.push(states[i].getName());
       }
       /*
-      * Here, if state s does not exist yet in the automaton, here it is created and 
+      * Here, if state s does not exist yet in the automaton, it is created and 
       * initialized with an empty transitions array.
       */
       if (!stateNames.includes(s)){
